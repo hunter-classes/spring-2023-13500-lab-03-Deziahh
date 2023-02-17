@@ -1,37 +1,50 @@
-#include "reverseorder.h"
-#include "reservoir.h"
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <vector>
-#include <algorithm>
+#include "reverseorder.h"
 
 void reverse_order(std::string date1, std::string date2) {
-    std::vector<std::string> dates;
-    std::vector<double> west_storage;
-    
-    std::string line;
-    while (std::getline(std::cin, line)) {
-        std::stringstream ss(line);
-        std::string date;
-        double east_st, west_st;
-        if (ss >> date >> east_st >> west_st) {
-            if (date >= date1 && date <= date2) {
-                dates.push_back(date);
-                west_storage.push_back(west_st);
-            }
-        }
-    }
-
-    if (dates.empty()) {
-        std::cout << "No data found in the specified date range." << std::endl;
+    // Open the data file for reading
+    std::ifstream input_file("Current_Reservoir_Levels.tsv");
+    if (!input_file) {
+        std::cerr << "Error opening file." << std::endl;
         return;
     }
 
-    std::cout << "West basin elevation for the period " << date1 << " - " << date2 << ":" << std::endl;
+    // Read the data from the file and store it in a vector of strings
+    std::vector<std::string> data_lines;
+    std::string line;
+    while (std::getline(input_file, line)) {
+        data_lines.push_back(line);
+    }
 
-    std::reverse(dates.begin(), dates.end());
-    std::reverse(west_storage.begin(), west_storage.end());
+    // Find the indices of the lines corresponding to date1 and date2
+    int date1_index = -1;
+    int date2_index = -1;
+    for (int i = 0; i < data_lines.size(); i++) {
+        std::string current_date = data_lines[i].substr(0, 10);
+        if (current_date == date1) {
+            date1_index = i;
+        }
+        if (current_date == date2) {
+            date2_index = i;
+            break;
+        }
+    }
 
-    for (size_t i = 0; i < dates.size(); i++) {
-        std::cout << dates[i] << " " << west_storage[i] << " ft" << std::endl;
+    // If date2 comes before date1 in the data file, swap the indices
+    if (date1_index > date2_index) {
+        int temp = date1_index;
+        date1_index = date2_index;
+        date2_index = temp;
+    }
+
+    // Print out the West basin elevation for all days in the interval in reverse chronological order
+    for (int i = date2_index; i >= date1_index; i--) {
+        std::string line = data_lines[i];
+        std::string date = line.substr(0, 10);
+        double west_storage = std::stod(line.substr(20, 7));
+        std::cout << date << " " << west_storage << std::endl;
     }
 }
