@@ -36,7 +36,7 @@ double get_min_east_storage() {
     std::ifstream input_file("Current_Reservoir_Levels.tsv");
     if (!input_file) {
         std::cerr << "Error opening file." << std::endl;
-        return -1;
+        return 0;
     }
 
     // Read the data from the file
