@@ -31,7 +31,7 @@ double get_east_storage(std::string date) {
     return 0;
 }
 
-double get_min_east_storage() {
+double get_min_east() {
     // Open the data file for reading
     std::ifstream input_file("Current_Reservoir_Levels.tsv");
     if (!input_file) {
