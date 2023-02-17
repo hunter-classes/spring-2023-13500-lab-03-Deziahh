@@ -58,3 +58,31 @@ double get_min_east() {
 
     return min_east_storage;
 }
+
+double get_max_east() {
+    // Open the data file for reading
+    std::ifstream input_file("Current_Reservoir_Levels.tsv");
+    if (!input_file) {
+        std::cerr << "Error opening file." << std::endl;
+        return 0;
+    }
+
+    // Read the data from the file
+    double max_east_storage = std::numeric_limits<double>::infinity();
+    std::string line;
+    while (std::getline(input_file, line)) {
+        std::stringstream ss(line);
+        std::string date_string;
+        double east_storage;
+        if (ss >> date_string >> east_storage) {
+            if (east_storage > max_east_storage) {
+                max_east_storage = east_storage;
+            }
+        }
+    }
+
+    // If we reach this point, we have read all the data in the file
+    input_file.close();
+
+    return max_east_storage;
+}
