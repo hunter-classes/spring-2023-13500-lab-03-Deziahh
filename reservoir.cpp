@@ -86,3 +86,42 @@ double get_max_east() {
 
     return max_east_storage;
 }
+
+std::string compare_basins(std::string date) {
+    // Open the data file for reading
+    std::ifstream input_file("Current_Reservoir_Levels.tsv");
+    if (!input_file) {
+        std::cerr << "Error opening file." << std::endl;
+        return "Error";
+    }
+
+    // Read the data from the file
+    double east_storage = -1.0;
+    double west_storage = -1.0;
+    std::string line;
+    while (std::getline(input_file, line)) {
+        std::stringstream ss(line);
+        std::string date_string;
+        double east_storage_tmp, west_storage_tmp;
+        if (ss >> date_string >> east_storage_tmp >> west_storage_tmp) {
+            if (date_string == date) {
+                east_storage = east_storage_tmp;
+                west_storage = west_storage_tmp;
+                break;
+            }
+        }
+    }
+
+    // If we reach this point, either we found the data for the specified date or we reached the end of the file
+    if (east_storage == -1.0 || west_storage == -1.0) {
+        // Data for the specified date was not found
+        return "Error: Data for specified date not found.";
+    } else if (east_storage > west_storage) {
+        return "East";
+    } else if (west_storage > east_storage) {
+        return "West";
+    } else {
+        return "Equal";
+    }
+}
+
