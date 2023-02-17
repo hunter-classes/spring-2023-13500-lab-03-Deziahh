@@ -68,7 +68,7 @@ double get_max_east() {
     }
 
     // Read the data from the file
-    double max_east_storage = std::numeric_limits<double>::infinity();
+    double max_east_storage = -1.0;
     std::string line;
     while (std::getline(input_file, line)) {
         std::stringstream ss(line);
